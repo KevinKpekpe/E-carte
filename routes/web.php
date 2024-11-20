@@ -1,5 +1,7 @@
 <?php
 
+use App\Http\Controllers\Admin\HomeController;
+use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Clients\ClassiqueController;
 use App\Http\Controllers\Clients\PremiumController;
@@ -17,6 +19,7 @@ Route::middleware(['auth', 'user.type:classique','verified'])->group(function ()
 
 Route::middleware(['auth', 'user.type:premium', 'verified'])->group(function () {
     Route::view('/premium', 'clients.premium.index')->name('premium.index');
+    Route::view('/premium/edit', 'clients.premium.edit')->name('premium.edit');
 });
 
 Route::get('/register/classique', [ClassiqueController::class, 'create']);
@@ -32,7 +35,7 @@ Route::get('/bye', function () {
     return view('auth.logout');
 })->name('logout.vue');
 Route::middleware(['auth'])->group(function () {
-    Route::get('logout', [LoginController::class, 'logout'])->name('logout');
+    Route::post('logout', [LoginController::class, 'logout'])->name('logout');
 });
 
 
@@ -43,3 +46,14 @@ Route::get('/email/verify', function () {
 })->middleware('auth')->name('verification.notice');
 Route::post('/email/resend-verification', [ClassiqueController::class, 'resendVerification'])
     ->name('verification.resend')->middleware('throttle');
+
+// Routes admin
+Route::prefix('admin')->name('admin.')->middleware(['auth', 'user.type:superadmin'])->group(function(){
+    Route::get('/', [HomeController::class, 'index'])->name('dashboard');
+    Route::get('/users', [UserController::class, 'index'])->name('users.index');
+    Route::post('/users/{id}/deactivate', [UserController::class, 'deactivateAccount'])->name('users.deactivate');
+    Route::post('/users/{id}/send-activation', [UserController::class, 'sendActivationLink'])->name('users.send-activation');
+    Route::delete('/users/{id}', [UserController::class, 'destroy'])->name('users.destroy');
+});
+Route::get('/users/activate/{token}', [UserController::class, 'activateAccount'])->name('users.activate');
+

@@ -24,7 +24,8 @@ protected $fillable = [
         'is_active',
         'email_verified_at',
         'vcard_file',
-        'expiration_date'
+        'expiration_date',
+        'activation_token'
     ];
 
     protected $hidden = [

@@ -27,7 +27,7 @@
                             <div class="collapse" id="contacts">
                                 <ul class="nav-second-level">
                                     <li>
-                                        <a href="contacts-list.html">Liste des membres</a>
+                                        <a href="{{route('admin.users.index')}}">Liste des membres</a>
                                     </li>
                                     <li>
                                         <a href="contacts-profile.html">Profile</a>

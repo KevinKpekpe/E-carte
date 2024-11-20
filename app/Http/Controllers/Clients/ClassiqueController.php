@@ -112,7 +112,7 @@ class ClassiqueController extends Controller
         }
 
         $user = $verification->user;
-        $user->update(['is_active' => true, 'email_verified_at' => Carbon::now()]);
+        $user->update(['email_verified_at' => Carbon::now()]);
         $verification->delete();
 
         return redirect()->route('login')

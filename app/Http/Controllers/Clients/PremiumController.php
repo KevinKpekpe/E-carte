@@ -114,7 +114,7 @@ class PremiumController extends Controller
         }
 
         $user = $verification->user;
-        $user->update(['is_active' => true, 'email_verified_at' => Carbon::now()]);
+        $user->update(['email_verified_at' => Carbon::now()]);
         $verification->delete();
 
         return redirect()->route('login')
@@ -135,7 +135,7 @@ class PremiumController extends Controller
         // Supprimer l'ancien token s'il existe
         EmailVerification::where('user_id', $user->id)->delete();
 
-        // Créer un nouveau token
+        // Créer un nouveautoken
         $token = Str::random(64);
         EmailVerification::create([
             'user_id' => $user->id,
@@ -147,5 +147,8 @@ class PremiumController extends Controller
         Mail::to($user->email)->send(new MailEmailVerification($user, $token));
 
         return back()->with('success', 'Un nouveau lien de vérification a été envoyé à votre adresse email.');
+    }
+    public function edit(){
+        return view('clients.premium.edit');
     }
 }

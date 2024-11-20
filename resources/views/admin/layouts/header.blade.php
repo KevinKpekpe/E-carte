@@ -8,10 +8,10 @@
     <meta content="A fully featured admin theme which can be used to build CRM, CMS, etc." name="description" />
     <meta content="Coderthemes" name="author" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <link rel="shortcut icon" href="assets/images/favicon.ico">
-    <script src="assets/js/config.js"></script>
-    <link href="assets/css/app.min.css" rel="stylesheet" type="text/css" id="app-style" />
-    <link href="assets/css/icons.min.css" rel="stylesheet" type="text/css" />
+    <link rel="shortcut icon" href="{{asset('assets/images/favicon.ico')}}">
+    <script src="{{ asset('assets/js/config.js') }}"></script>
+    <link href="{{ asset('assets/css/app.min.css') }}" rel="stylesheet" type="text/css" id="app-style" />
+    <link href="{{ asset('assets/css/icons.min.css') }}" rel="stylesheet" type="text/css" />
 </head>
 
 <body>
@@ -46,9 +46,11 @@
                         <a class="nav-link dropdown-toggle nav-user me-0 waves-effect waves-light"
                             data-bs-toggle="dropdown" href="#" role="button" aria-haspopup="false"
                             aria-expanded="false">
-                            <img src="https://png.pngtree.com/png-vector/20240601/ourmid/pngtree-casual-man-flat-design-avatar-profile-picture-vector-png-image_12593008.png" alt="user-image" class="rounded-circle">
+                            <img src="https://png.pngtree.com/png-vector/20240601/ourmid/pngtree-casual-man-flat-design-avatar-profile-picture-vector-png-image_12593008.png"
+                                alt="user-image" class="rounded-circle">
                             <span class="pro-user-name ms-1">
-                                Light Dev <i class="mdi mdi-chevron-down"></i>
+                                {{ auth()->user()->nom }}
+                                <i class="mdi mdi-chevron-down"></i>
                             </span>
                         </a>
                         <div class="dropdown-menu dropdown-menu-end profile-dropdown ">
@@ -72,10 +74,15 @@
                             <div class="dropdown-divider"></div>
 
 
-                            <a href="auth-logout.html" class="dropdown-item notify-item">
-                                <i class="fe-log-out"></i>
-                                <span>Déconnexion</span>
-                            </a>
+                            <form method="POST" action="{{ route('logout') }}" class="dropdown-item notify-item">
+                                @csrf
+                                <button type="submit" class="btn btn-link text-dark p-0"
+                                    style="text-decoration: none;">
+                                    <i class="fe-log-out"></i>
+                                    <span>Déconnexion</span>
+                                </button>
+                            </form>
+
 
                         </div>
                     </li>
@@ -91,7 +98,7 @@
                             <h2 style="color:orange">E-CARTE</h2>
                         </span>
                     </a>
-                    <a href="index.html" class="logo logo-dark text-center">
+                    <a href="{{route('admin.dashboard')}}" class="logo logo-dark text-center">
                         <span class="logo-sm">
                             <h2 style="color:orange">E-CARTE</h2>
                         </span>
