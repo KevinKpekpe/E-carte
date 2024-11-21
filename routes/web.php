@@ -20,6 +20,10 @@ Route::middleware(['auth', 'user.type:classique','verified'])->group(function ()
 Route::middleware(['auth', 'user.type:premium', 'verified'])->group(function () {
     Route::view('/premium', 'clients.premium.index')->name('premium.index');
     Route::view('/premium/edit', 'clients.premium.edit')->name('premium.edit');
+    Route::view('/premium/change', 'clients.premium.change-password')->name('premium.change');
+    Route::put('/premium/update',[PremiumController::class,'update'])->name('premium.update');
+    Route::put('/premium/update-password', [PremiumController::class, 'updatePassword'])
+    ->name('premium.update-password');
 });
 
 Route::get('/register/classique', [ClassiqueController::class, 'create']);
@@ -56,4 +60,5 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'user.type:superadmi
     Route::delete('/users/{id}', [UserController::class, 'destroy'])->name('users.destroy');
 });
 Route::get('/users/activate/{token}', [UserController::class, 'activateAccount'])->name('users.activate');
+
 

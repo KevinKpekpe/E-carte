@@ -89,17 +89,11 @@
                         <i class="mdi mdi-dots-vertical"></i>
                     </a>
                     <div class="dropdown-menu dropdown-menu-end">
-                        <a href="" class="dropdown-item">Modifier mes infos</a>
+                        <a href="{{route('premium.edit')}}" class="dropdown-item">Modifier mes infos</a>
                         <form action="" method="POST">
                             @csrf
                             @method('DELETE')
                             <button type="submit" class="dropdown-item text-danger">Supprimer mon compte</button>
-                        </form>
-                        <form action="" method="POST">
-                            @csrf
-                            <button type="submit" class="dropdown-item">
-                                {{ auth()->user()->is_active ? 'Désactiver' : 'Activer' }} mon compte
-                            </button>
                         </form>
                     </div>
                 </div>

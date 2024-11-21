@@ -157,15 +157,15 @@
                     <div class="row">
                         <div class="col-md-4">
                             <input type="text"
-                                   class="form-control"
-                                   name="social_links[${socialLinkCount}][platform]"
-                                   placeholder="Plateforme">
+                                class="form-control"
+                                name="social_links[${socialLinkCount}][platform]"
+                                placeholder="Plateforme">
                         </div>
                         <div class="col-md-8">
                             <input type="url"
-                                   class="form-control"
-                                   name="social_links[${socialLinkCount}][url]"
-                                   placeholder="URL">
+                                class="form-control"
+                                name="social_links[${socialLinkCount}][url]"
+                                placeholder="URL">
                         </div>
                     </div>
                 </div>

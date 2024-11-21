@@ -24,16 +24,18 @@
                                 <span> Users </span>
                                 <span class="menu-arrow"></span>
                             </a>
-                            <div class="collapse" id="contacts">
+                            @if (auth()->user()->userType->name === "premium")
+                                <div class="collapse" id="contacts">
                                 <ul class="nav-second-level">
                                     <li>
-                                        <a href="contacts-list.html">Liste des membres</a>
+                                        <a href="{{route('premium.index')}}">Home</a>
                                     </li>
                                     <li>
-                                        <a href="contacts-profile.html">Profile</a>
+                                        <a href="{{route('premium.edit')}}">Profile</a>
                                     </li>
                                 </ul>
                             </div>
+                            @endif
                         </li>
 
                     </ul>

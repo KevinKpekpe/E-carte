@@ -14,6 +14,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 
 class PremiumController extends Controller
@@ -150,5 +151,104 @@ class PremiumController extends Controller
     }
     public function edit(){
         return view('clients.premium.edit');
+    }
+    public function update(Request $request)
+    {
+        $user = auth()->user();
+
+        $request->validate([
+            'nom' => 'required|string|max:255',
+            'prenom' => 'required|string|max:255',
+            'telephone' => 'required|string|max:20',
+            'profession' => 'required|string|max:255',
+            'photo' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'social_links' => 'nullable|array',
+            'social_links.*.platform' => 'required|string|max:255',
+            'social_links.*.url' => 'required|url',
+        ]);
+
+        try {
+            DB::beginTransaction();
+
+            // Gestion de la photo
+            $photoPath = $user->photo_profile;
+            if ($request->hasFile('photo')) {
+                // Suppression de l'ancienne photo si elle existe
+                if ($photoPath && Storage::disk('public')->exists($photoPath)) {
+                    Storage::disk('public')->delete($photoPath);
+                }
+                $photoPath = $request->file('photo')->store('profile-photos', 'public');
+            }
+
+            // Mise à jour des informations de l'utilisateur
+            $user->update([
+                'nom' => $request->nom,
+                'prenom' => $request->prenom,
+                'telephone' => $request->telephone,
+                'profession' => $request->profession,
+                'photo_profile' => $photoPath,
+            ]);
+
+            // Mise à jour des réseaux sociaux
+            // Suppression des anciens liens
+            SocialLink::where('user_id', $user->id)->delete();
+
+            // Ajout des nouveaux liens
+            if ($request->has('social_links')) {
+                foreach ($request->social_links as $link) {
+                    if (!empty($link['platform']) && !empty($link['url'])) {
+                        SocialLink::create([
+                            'user_id' => $user->id,
+                            'platform' => $link['platform'],
+                            'url' => $link['url'],
+                        ]);
+                    }
+                }
+            }
+
+            // Suppression de l'ancien fichier VCard s'il existe
+            if ($user->vcard_file && Storage::exists($user->vcard_file)) {
+                Storage::delete($user->vcard_file);
+            }
+
+            // Génération du nouveau fichier VCard
+            $vcardPath = $this->generateVcard($user);
+            $user->update(['vcard_file' => $vcardPath]);
+
+            DB::commit();
+
+            return redirect()->route('premium.edit')
+            ->with('success', 'Votre profil a été mis à jour avec succès.');
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return back()->with('error', 'Une erreur est survenue lors de la mise à jour du profil: ' . $e->getMessage())
+                ->withInput();
+        }
+    }
+    public function updatePassword(Request $request)
+    {
+        $request->validate([
+            'current_password' => ['required', function ($attribute, $value, $fail) {
+                if (!Hash::check($value, auth()->user()->password)) {
+                    $fail('Le mot de passe actuel est incorrect.');
+                }
+            }],
+            'password' => 'required|string|min:8|confirmed|different:current_password',
+        ], [
+            'password.different' => 'Le nouveau mot de passe doit être différent de l\'ancien.',
+        ]);
+
+        try {
+            $user = auth()->user();
+            $user->update([
+                'password' => Hash::make($request->password)
+            ]);
+
+            return redirect()->back()->with('success', 'Votre mot de passe a été modifié avec succès.');
+        } catch (\Exception $e) {
+            return redirect()->back()
+                ->with('error', 'Une erreur est survenue lors du changement de mot de passe.')
+                ->withInput();
+        }
     }
 }

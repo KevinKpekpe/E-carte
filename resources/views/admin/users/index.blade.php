@@ -272,7 +272,8 @@
             socialLinksDiv.insertAdjacentHTML('beforeend', newSocialLink);
             socialLinkCount++;
         });
-        document.addEventListener('DOMContentLoaded', function() {
+
+    document.addEventListener('DOMContentLoaded', function() {
     let searchTimeout;
     const searchInput = document.getElementById('search');
     const form = searchInput.closest('form');

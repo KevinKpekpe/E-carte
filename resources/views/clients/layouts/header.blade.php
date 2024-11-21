@@ -54,9 +54,8 @@
                                 <img src="{{ asset('assets/images/users/default-profile.jpg') }}" alt="user-image"
                                     class="rounded-circle">
                             @endif
-                            <img src="{{ auth()->user()->photo_profile }}" alt="user-image" class="rounded-circle">
                             <span class="pro-user-name ms-1">
-                                Light Dev <i class="mdi mdi-chevron-down"></i>
+                                {{auth()->user()->nom}}<i class="mdi mdi-chevron-down"></i>
                             </span>
                         </a>
                         <div class="dropdown-menu dropdown-menu-end profile-dropdown ">
