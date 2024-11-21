@@ -8,8 +8,8 @@ use App\Http\Controllers\Clients\PremiumController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
-    return view('welcome');
-});
+    return redirect('login');
+})->middleware('guest');
 
 
 // Routes protégées pour les utilisateurs classiques
@@ -58,6 +58,8 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'user.type:superadmi
     Route::post('/users/{id}/deactivate', [UserController::class, 'deactivateAccount'])->name('users.deactivate');
     Route::post('/users/{id}/send-activation', [UserController::class, 'sendActivationLink'])->name('users.send-activation');
     Route::delete('/users/{id}', [UserController::class, 'destroy'])->name('users.destroy');
+    Route::post('/users', [UserController::class, 'store'])->name('users.store');
+    Route::put('/users/{user}', [UserController::class, 'update'])->name('users.update');
 });
 Route::get('/users/activate/{token}', [UserController::class, 'activateAccount'])->name('users.activate');
 
