@@ -14,6 +14,8 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->alias([
             'user.type' => \App\Http\Middleware\CheckUserType::class,
             'is.active' => \App\Http\Middleware\CheckUserIsActive::class,
+            'lock.screen' => \App\Http\Middleware\InactivityMiddleware::class,
+
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {

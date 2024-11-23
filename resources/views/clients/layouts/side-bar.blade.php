@@ -9,11 +9,20 @@
                         <li class="menu-title">Navigation</li>
 
                         <li>
-                            <a href="index.html">
+                            @if (auth()->user()->userType->name === "premium")
+                                <a href="{{route('premium.index')}}">
                                 <i class="mdi mdi-view-dashboard-outline"></i>
                                 <span class="badge bg-success rounded-pill float-end">9+</span>
                                 <span> Dashboard </span>
                             </a>
+                            @endif
+                            @if (auth()->user()->userType->name === "classique")
+                                <a href="{{route('classique.index')}}">
+                                <i class="mdi mdi-view-dashboard-outline"></i>
+                                <span class="badge bg-success rounded-pill float-end">9+</span>
+                                <span> Dashboard </span>
+                            </a>
+                            @endif
                         </li>
 
                         <li class="menu-title mt-2">Apps</li>

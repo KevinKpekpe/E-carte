@@ -3,12 +3,12 @@
 
 <head>
     <meta charset="utf-8" />
-    <title>Dashboard | ecarte</title>
+    <title>Dashboard | @yield('title', 'ecarte')</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta content="A fully featured admin theme which can be used to build CRM, CMS, etc." name="description" />
     <meta content="Coderthemes" name="author" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <link rel="shortcut icon" href="{{asset('assets/images/favicon.ico')}}">
+    <link rel="shortcut icon" href="{{ asset('assets/images/favicon.ico') }}">
     <script src="{{ asset('assets/js/config.js') }}"></script>
     <link href="{{ asset('assets/css/app.min.css') }}" rel="stylesheet" type="text/css" id="app-style" />
     <link href="{{ asset('assets/css/icons.min.css') }}" rel="stylesheet" type="text/css" />
@@ -60,16 +60,17 @@
                             </div>
 
 
-                            <a href="contacts-profile.html" class="dropdown-item notify-item">
+                            <a href="{{ route('admin.profil') }}" class="dropdown-item notify-item">
                                 <i class="fe-user"></i>
                                 <span>Mon compte </span>
                             </a>
 
-
-                            <a href="auth-lock-screen.html" class="dropdown-item notify-item">
-                                <i class="fe-lock"></i>
-                                <span>Verouiller</span>
-                            </a>
+                            <form action="" method="POST" class="d-inline">
+                                @csrf
+                                <button type="submit" class="btn btn-link">
+                                    <i class="fas fa-lock"></i> Verrouiller l'écran
+                                </button>
+                            </form>
 
                             <div class="dropdown-divider"></div>
 
@@ -90,7 +91,7 @@
                 </ul>
 
                 <div class="logo-box">
-                    <a href="index.html" class="logo logo-light text-center">
+                    <a href="{{ route('admin.dashboard') }}" class="logo logo-light text-center">
                         <span class="logo-sm">
                             <h2 style="color:orange">E-CARTE</h2>
                         </span>
@@ -98,7 +99,7 @@
                             <h2 style="color:orange">E-CARTE</h2>
                         </span>
                     </a>
-                    <a href="{{route('admin.dashboard')}}" class="logo logo-dark text-center">
+                    <a href="{{ route('admin.dashboard') }}" class="logo logo-dark text-center">
                         <span class="logo-sm">
                             <h2 style="color:orange">E-CARTE</h2>
                         </span>

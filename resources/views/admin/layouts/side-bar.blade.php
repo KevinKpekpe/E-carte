@@ -9,7 +9,7 @@
                         <li class="menu-title">Navigation</li>
 
                         <li>
-                            <a href="index.html">
+                            <a href="{{route('admin.dashboard')}}">
                                 <i class="mdi mdi-view-dashboard-outline"></i>
                                 <span class="badge bg-success rounded-pill float-end">9+</span>
                                 <span> Dashboard </span>
@@ -30,7 +30,7 @@
                                         <a href="{{route('admin.users.index')}}">Liste des membres</a>
                                     </li>
                                     <li>
-                                        <a href="contacts-profile.html">Profile</a>
+                                        <a href="{{route('admin.profil.edit')}}">Profile</a>
                                     </li>
                                 </ul>
                             </div>

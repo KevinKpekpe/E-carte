@@ -103,52 +103,6 @@ class PremiumController extends Controller
                 ->withInput();
         }
     }
-    public function verifyEmail($token)
-    {
-        $verification = EmailVerification::where('token', $token)
-            ->where('expires_at', '>', Carbon::now())
-            ->first();
-
-        if (!$verification) {
-            return redirect()->route('login')
-                ->with('error', 'Le lien de vérification est invalide ou a expiré.');
-        }
-
-        $user = $verification->user;
-        $user->update(['email_verified_at' => Carbon::now()]);
-        $verification->delete();
-
-        return redirect()->route('login')
-            ->with('success', 'Votre compte a été vérifié avec succès ! Vous pouvez maintenant vous connecter.');
-    }
-    public function resendVerification(Request $request)
-    {
-        $user = User::where('email', $request->email)->first();
-
-        if (!$user) {
-            return back()->with('error', 'Utilisateur non trouvé.');
-        }
-
-        if ($user->email_verified_at) {
-            return back()->with('info', 'Cet email est déjà vérifié.');
-        }
-
-        // Supprimer l'ancien token s'il existe
-        EmailVerification::where('user_id', $user->id)->delete();
-
-        // Créer un nouveautoken
-        $token = Str::random(64);
-        EmailVerification::create([
-            'user_id' => $user->id,
-            'token' => $token,
-            'expires_at' => Carbon::now()->addMinutes(10)
-        ]);
-
-        // Renvoyer l'email
-        Mail::to($user->email)->send(new MailEmailVerification($user, $token));
-
-        return back()->with('success', 'Un nouveau lien de vérification a été envoyé à votre adresse email.');
-    }
     public function edit(){
         return view('clients.premium.edit');
     }
@@ -222,32 +176,6 @@ class PremiumController extends Controller
         } catch (\Exception $e) {
             DB::rollBack();
             return back()->with('error', 'Une erreur est survenue lors de la mise à jour du profil: ' . $e->getMessage())
-                ->withInput();
-        }
-    }
-    public function updatePassword(Request $request)
-    {
-        $request->validate([
-            'current_password' => ['required', function ($attribute, $value, $fail) {
-                if (!Hash::check($value, auth()->user()->password)) {
-                    $fail('Le mot de passe actuel est incorrect.');
-                }
-            }],
-            'password' => 'required|string|min:8|confirmed|different:current_password',
-        ], [
-            'password.different' => 'Le nouveau mot de passe doit être différent de l\'ancien.',
-        ]);
-
-        try {
-            $user = auth()->user();
-            $user->update([
-                'password' => Hash::make($request->password)
-            ]);
-
-            return redirect()->back()->with('success', 'Votre mot de passe a été modifié avec succès.');
-        } catch (\Exception $e) {
-            return redirect()->back()
-                ->with('error', 'Une erreur est survenue lors du changement de mot de passe.')
                 ->withInput();
         }
     }

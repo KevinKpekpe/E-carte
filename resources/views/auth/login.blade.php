@@ -1,4 +1,5 @@
 @extends('auth.app')
+@section('title','Log In | E-carte')
 @section('content')
     <div class="container">
         <div class="row justify-content-center">
@@ -68,19 +69,12 @@
                         </form>
                     </div>
                 </div>
-
-                <div class="row mt-3">
-                    <div class="col-12 text-center">
-                        <p><a href="" class="text-dark ms-1">
-                                <i class="fa fa-lock me-1"></i>Mot de passe oublié ?</a>
-                        </p>
-                        <p class="text-muted">Vous n'avez pas de compte ?
-                            <a href="" class="text-dark ms-1">
-                                <b>Créer mon compte</b>
-                            </a>
-                        </p>
+                    <div class="row mt-3">
+                        <div class="col-12 text-center">
+                            <p> <a href="{{route('password.request')}}" class="text-dark ms-1"><i
+                                        class="fa fa-lock me-1"></i>Mot de passe oublié ?</a></p>
+                        </div>
                     </div>
-                </div>
             </div>
         </div>
     </div>
