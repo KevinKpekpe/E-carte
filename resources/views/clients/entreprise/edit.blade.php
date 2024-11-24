@@ -6,7 +6,7 @@
             <div class="card-body">
                 <h4 class="header-title mb-3">Modifier mes informations</h4>
 
-                <form action="" method="POST" enctype="multipart/form-data">
+                <form action="{{route('entreprise.update')}}" method="POST" enctype="multipart/form-data">
                     @csrf
                     @method('PUT')
 
@@ -53,7 +53,27 @@
                             </div>
                         </div>
                     </div>
+                                                <!-- Informations de l'entreprise -->
+                            <h5 class="mb-3">Informations de l'entreprise</h5>
+                            <div class="row mb-3">
+                                <div class="col-md-6">
+                                    <label for="nom_entreprise" class="form-label">Nom de l'entreprise</label>
+                                    <input class="form-control @error('nom_entreprise') is-invalid @enderror" type="text"
+                                        id="nom_entreprise" name="nom_entreprise" value="{{ old('nombre_employes', auth()->user()->company?->nom_entreprise) }}" required>
+                                    @error('nom_entreprise')
+                                        <div class="invalid-feedback">{{ $message }}</div>
+                                    @enderror
+                                </div>
 
+                                <div class="col-md-6">
+                                    <label for="nombre_employes" class="form-label">Nombre d'employés</label>
+                                    <input class="form-control @error('nombre_employes') is-invalid @enderror" type="number"
+                                        id="nombre_employes" name="nombre_employes" value="{{ old('nombre_employes', auth()->user()->company?->nombre_employes) }}" required>
+                                    @error('nombre_employes')
+                                        <div class="invalid-feedback">{{ $message }}</div>
+                                    @enderror
+                                </div>
+                            </div>
                     <div class="mb-3">
                         <label for="profession" class="form-label">Profession</label>
                         <input type="text" class="form-control @error('profession') is-invalid @enderror"

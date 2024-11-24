@@ -6,7 +6,7 @@
             <div class="card">
                 <div class="card-body p-4">
                     <div class="text-center mb-4">
-                        <h4 class="text-uppercase mt-0 mb-4">Welcome Back</h4>
+                        <h4 class="text-uppercase mt-0 mb-4">Bon Retour Chez vous !!</h4>
                         <p class="text-muted my-4">Entrez votre mot de passe pour vous reconnecter.</p>
                     </div>
 
@@ -16,11 +16,11 @@
                         <div class="mb-3">
                             <label for="password" class="form-label">Password</label>
                             <input class="form-control @error('password') is-invalid @enderror"
-                                   type="password"
-                                   required
-                                   id="password"
-                                   name="password"
-                                   placeholder="Votre password">
+                                type="password"
+                                required
+                                id="password"
+                                name="password"
+                                placeholder="Votre password">
 
                             @error('password')
                                 <div class="invalid-feedback">
@@ -41,8 +41,8 @@
                     <p class="text-muted">
                         Ce n'est pas vous ?
                         <a href="{{ route('logout') }}"
-                           onclick="event.preventDefault(); document.getElementById('logout-form').submit();"
-                           class="text-dark ms-1">
+                        onclick="event.preventDefault(); document.getElementById('logout-form').submit();"
+                        class="text-dark ms-1">
                             <b>Se déconnecter</b>
                         </a>
                     </p>

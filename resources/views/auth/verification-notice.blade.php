@@ -38,7 +38,7 @@
                         </form>
 
                         <div class="mb-3 text-center">
-                            <form method="GET" action="{{ route('logout') }}">
+                            <form method="POST" action="{{ route('logout') }}">
                                 @csrf
                                 <button type="submit" class="btn btn-link text-danger">
                                     Déconnexion

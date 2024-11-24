@@ -27,8 +27,10 @@ Route::middleware(['auth', 'user.type:entreprise', 'verified'])->group(function 
     Route::view('/entreprise', 'clients.entreprise.index')->name('entreprise.index');
     Route::view('/entreprise/change', 'clients.entreprise.change-password')->name('entreprise.change');
     Route::view('/entreprise/edit', 'clients.entreprise.edit')->name('entreprise.edit');
+    Route::put('/entreprise/update', [EntrepriseController::class, 'update'])->name('entreprise.update');
     Route::put('/entreprise/update-password', [PasswordChangeController::class, 'updatePassword'])
     ->name('entreprise.update-password');
+    Route::view('/entreprise/employe','clients.entreprise.employee.index')->name('entreprise.employee.index');
 });
 
 // Routes protégées pour les utilisateurs Premuim

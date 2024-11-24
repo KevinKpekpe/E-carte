@@ -16,6 +16,13 @@
                                 <span> Dashboard </span>
                             </a>
                             @endif
+                            @if (auth()->user()->userType->name === "entreprise")
+                                <a href="{{route('entreprise.index')}}">
+                                <i class="mdi mdi-view-dashboard-outline"></i>
+                                <span class="badge bg-success rounded-pill float-end">9+</span>
+                                <span> Dashboard </span>
+                            </a>
+                            @endif
                             @if (auth()->user()->userType->name === "classique")
                                 <a href="{{route('classique.index')}}">
                                 <i class="mdi mdi-view-dashboard-outline"></i>
@@ -23,6 +30,7 @@
                                 <span> Dashboard </span>
                             </a>
                             @endif
+
                         </li>
 
                         <li class="menu-title mt-2">Apps</li>
@@ -41,6 +49,21 @@
                                     </li>
                                     <li>
                                         <a href="{{route('premium.edit')}}">Profile</a>
+                                    </li>
+                                </ul>
+                            </div>
+                            @endif
+                            @if (auth()->user()->userType->name === "entreprise")
+                                <div class="collapse" id="contacts">
+                                <ul class="nav-second-level">
+                                    <li>
+                                        <a href="{{route('entreprise.index')}}">Home</a>
+                                    </li>
+                                    <li>
+                                        <a href="{{route('entreprise.edit')}}">Profile</a>
+                                    </li>
+                                    <li>
+                                        <a href="{{route('entreprise.employee.index')}}">Mes Employés</a>
                                     </li>
                                 </ul>
                             </div>
