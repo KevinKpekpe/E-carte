@@ -7,29 +7,28 @@
                     <div class="row justify-content-between">
                         <div class="col-md-4">
                             <div class="mt-3 mt-md-0">
-                                <button type="button" class="btn btn-success waves-effect waves-light"
-                                    data-bs-toggle="modal" data-bs-target="#custom-modal">
+                                <a href="{{route('entreprise.employees.create')}}" class="btn btn-success waves-effect waves-light"
+                                    >
                                     <i class="mdi mdi-plus-circle me-1"></i> Ajouter un employé
-                                </button>
+                                </a>
                             </div>
                         </div>
                         <div class="col-md-8">
                             <form class="d-flex flex-wrap align-items-center justify-content-sm-end" method="GET"
-                                action="">
-                                <label for="status-select" class="me-2">Trier par</label>
+                                action="{{ route('entreprise.employees.index') }}">
+                                <label for="sort" class="me-2">Trier par</label>
                                 <div class="me-sm-2">
-                                    <select class="form-select my-1 my-md-0" id="status-select">
-                                        <option value="">All</option>
-                                        <option value="1">Nom</option>
-                                        <option value="2">Type</option>
-                                        <option value="3">Statut
-                                        </option>
+                                    <select class="form-select my-1 my-md-0" id="sort" name="sort">
+                                        <option value="">Tous</option>
+                                        <option value="1" {{ request('sort') == '1' ? 'selected' : '' }}>Nom</option>
+                                        <option value="2" {{ request('sort') == '2' ? 'selected' : '' }}>Profession</option>
+                                        <option value="3" {{ request('sort') == '3' ? 'selected' : '' }}>Statut</option>
                                     </select>
                                 </div>
-                                <label for="search" class="visually-hidden">Search</label>
+                                <label for="search" class="visually-hidden">Rechercher</label>
                                 <div class="d-flex">
                                     <input type="search" class="form-control my-1 my-md-0" id="search" name="search"
-                                        placeholder="Search..." value="">
+                                        placeholder="Rechercher..." value="{{ request('search') }}">
                                     <button type="submit" class="btn btn-primary ms-2">
                                         <i class="fas fa-search"></i>
                                     </button>
@@ -44,115 +43,81 @@
 
     <div class="row">
         <div class="col-xl-12">
-            <div class="table-responsive">
-                <table class="table table-striped">
-                    <thead>
-                        <tr>
-                            <th>Nom complet</th>
-                            <th>Email</th>
-                            <th>Téléphone</th>
-                            <th>Profession</th>
-                            <th>Date d'expiration</th>
-                            <th>Statut</th>
-                            <th>Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td>John Doe</td>
-                            <td>john.doe@example.com</td>
-                            <td>+1 234 567 890</td>
-                            <td>Développeur</td>
-                            <td>2024-12-31</td>
-                            <td>
-                                <span class="badge bg-success">Actif</span>
-                            </td>
-                            <td>
-                                <button class="btn btn-sm btn-primary">Modifier</button>
-                                <button class="btn btn-sm btn-danger">Supprimer</button>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>Jane Smith</td>
-                            <td>jane.smith@example.com</td>
-                            <td>+1 234 567 891</td>
-                            <td>Designer</td>
-                            <td>2024-11-30</td>
-                            <td>
-                                <span class="badge bg-danger">Inactif</span>
-                            </td>
-                            <td>
-                                <button class="btn btn-sm btn-primary">Modifier</button>
-                                <button class="btn btn-sm btn-danger">Supprimer</button>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>Robert Johnson</td>
-                            <td>robert.j@example.com</td>
-                            <td>+1 234 567 892</td>
-                            <td>Marketing Manager</td>
-                            <td>2024-10-15</td>
-                            <td>
-                                <span class="badge bg-success">Actif</span>
-                            </td>
-                            <td>
-                                <button class="btn btn-sm btn-primary">Modifier</button>
-                                <button class="btn btn-sm btn-danger">Supprimer</button>
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-        </div>
-    </div>
+            <div class="card">
+                <div class="card-body">
+                    @if(session('success'))
+                        <div class="alert alert-success alert-dismissible fade show" role="alert">
+                            {{ session('success') }}
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>
+                    @endif
 
-    <!-- Modal Ajout/Modification -->
-    <div class="modal fade" id="custom-modal" tabindex="-1" role="dialog" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered" style="max-width: 80%;">
-            <div class="modal-content">
-                <div class="modal-header bg-light">
-                    <h4 class="modal-title">Ajouter un employé</h4>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-hidden="true"></button>
-                </div>
-                <div class="modal-body">
-                    <form method="POST" enctype="multipart/form-data">
-                        @csrf
-                        <!-- Première rangée -->
-                        <div class="row mb-3">
-                            <div class="col-md-4">
-                                <label for="nom" class="form-label">Nom</label>
-                                <input class="form-control" type="text" id="nom" name="nom" required>
-                            </div>
-                            <div class="col-md-4">
-                                <label for="prenom" class="form-label">Prénom</label>
-                                <input class="form-control" type="text" id="prenom" name="prenom" required>
-                            </div>
-                            <div class="col-md-4">
-                                <label for="email" class="form-label">Email</label>
-                                <input class="form-control" type="email" id="email" name="email" required>
-                            </div>
+                    @if(session('error'))
+                        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                            {{ session('error') }}
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                         </div>
+                    @endif
 
-                        <!-- Deuxième rangée -->
-                        <div class="row mb-3">
-                            <div class="col-md-4">
-                                <label for="telephone" class="form-label">Téléphone</label>
-                                <input class="form-control" type="text" id="telephone" name="telephone" required>
-                            </div>
-                            <div class="col-md-4">
-                                <label for="profession" class="form-label">Profession</label>
-                                <input class="form-control" type="text" id="profession" name="profession" required>
-                            </div>
-                            <div class="col-md-4">
-                                <label for="photo_profile" class="form-label">Photo de profil</label>
-                                <input class="form-control" type="file" id="photo_profile" name="photo_profile">
-                            </div>
-                        </div>
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button>
-                            <button type="submit" class="btn btn-primary">Enregistrer</button>
-                        </div>
-                    </form>
+                    <div class="table-responsive">
+                        <table class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th>Nom complet</th>
+                                    <th>Email</th>
+                                    <th>Téléphone</th>
+                                    <th>Profession</th>
+                                    <th>Date d'expiration</th>
+                                    <th>Statut</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @forelse($employees as $employee)
+                                    <tr>
+                                        <td>
+                                            @if($employee->photo_profile)
+                                                <img src="{{ Storage::url($employee->photo_profile) }}"
+                                                    alt="photo" class="rounded-circle me-2" width="32">
+                                            @endif
+                                            {{ $employee->nom }} {{ $employee->prenom }}
+                                        </td>
+                                        <td>{{ $employee->email }}</td>
+                                        <td>{{ $employee->telephone }}</td>
+                                        <td>{{ $employee->profession }}</td>
+                                        <td>{{ $employee->expiration_date->format('d/m/Y') }}</td>
+                                        <td>
+                                            <span class="badge bg-{{ $employee->is_active ? 'success' : 'danger' }}">
+                                                {{ $employee->is_active ? 'Actif' : 'Inactif' }}
+                                            </span>
+                                        </td>
+                                        <td>
+                                            <button type="button" class="btn btn-sm btn-primary edit-employee"
+                                                data-id="{{ $employee->id }}">
+                                                <i class="fas fa-edit"></i>
+                                            </button>
+                                            <button type="button" class="btn btn-sm btn-danger delete-employee"
+                                                data-id="{{ $employee->id }}">
+                                                <i class="fas fa-trash"></i>
+                                            </button>
+                                            <a href="{{ Storage::url($employee->vcard_file) }}"
+                                                class="btn btn-sm btn-info" download>
+                                                <i class="fas fa-download"></i>
+                                            </a>
+                                        </td>
+                                    </tr>
+                                @empty
+                                    <tr>
+                                        <td colspan="7" class="text-center">Aucun employé trouvé</td>
+                                    </tr>
+                                @endforelse
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="d-flex justify-content-end mt-3">
+                        {{ $employees->links() }}
+                    </div>
                 </div>
             </div>
         </div>

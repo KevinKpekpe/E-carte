@@ -8,6 +8,7 @@ use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Clients\ClassiqueController;
 use App\Http\Controllers\Clients\EntrepriseController;
 use App\Http\Controllers\Clients\PremiumController;
+use App\Http\Controllers\EmployeeController;
 use App\Http\Controllers\PasswordChangeController;
 use App\Http\Controllers\VerifyController;
 use Illuminate\Support\Facades\Route;
@@ -23,14 +24,14 @@ Route::middleware(['auth', 'user.type:classique','verified'])->group(function ()
 });
 
 // Routes protégées pour les utilisateurs classiques
-Route::middleware(['auth', 'user.type:entreprise', 'verified'])->group(function () {
-    Route::view('/entreprise', 'clients.entreprise.index')->name('entreprise.index');
-    Route::view('/entreprise/change', 'clients.entreprise.change-password')->name('entreprise.change');
-    Route::view('/entreprise/edit', 'clients.entreprise.edit')->name('entreprise.edit');
-    Route::put('/entreprise/update', [EntrepriseController::class, 'update'])->name('entreprise.update');
-    Route::put('/entreprise/update-password', [PasswordChangeController::class, 'updatePassword'])
+Route::prefix('entreprise')->name('entreprise.')->middleware(['auth', 'user.type:entreprise', 'verified'])->group(function () {
+    Route::view('/', 'clients.entreprise.index')->name('index');
+    Route::view('/change', 'clients.entreprise.change-password')->name('change');
+    Route::view('/edit', 'clients.entreprise.edit')->name('edit');
+    Route::put('/update', [EntrepriseController::class, 'update'])->name('update');
+    Route::put('/update-password', [PasswordChangeController::class, 'updatePassword'])
     ->name('entreprise.update-password');
-    Route::view('/entreprise/employe','clients.entreprise.employee.index')->name('entreprise.employee.index');
+    Route::resource('employees', EmployeeController::class);
 });
 
 // Routes protégées pour les utilisateurs Premuim
@@ -44,14 +45,16 @@ Route::middleware(['auth', 'user.type:premium', 'verified'])->group(function () 
 });
 
 // Routes protégées pour créer les Utilisateurs
-Route::get('/register/classique', [ClassiqueController::class, 'create']);
-Route::post('/register/classique', [ClassiqueController::class, 'register'])->name('register.classique');
+Route::middleware('guest')->group(function () {
+    Route::get('/register/classique', [ClassiqueController::class, 'create']);
+    Route::post('/register/classique', [ClassiqueController::class, 'register'])->name('register.classique');
 
-Route::get('/register/premium', [PremiumController::class, 'create']);
-Route::post('/register/premium', [PremiumController::class, 'register'])->name('register.premium');
+    Route::get('/register/premium', [PremiumController::class, 'create']);
+    Route::post('/register/premium', [PremiumController::class, 'register'])->name('register.premium');
 
-Route::get('/register/entreprise/create', [EntrepriseController::class, 'create']);
-Route::post('/register/entreprise', [EntrepriseController::class,'register'])->name('register.entreprise');
+    Route::get('/register/entreprise/create', [EntrepriseController::class, 'create']);
+    Route::post('/register/entreprise', [EntrepriseController::class, 'register'])->name('register.entreprise');
+});
 
 
 // Routes protégées pour l'authentication

@@ -296,7 +296,6 @@
         </div>
     </div>
     <script>
-        // Gestion du modal
         let socialLinkCount = 1;
 
         document.getElementById('add-social-link').addEventListener('click', function() {

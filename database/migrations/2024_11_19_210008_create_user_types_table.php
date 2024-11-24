@@ -18,12 +18,12 @@ return new class extends Migration
             $table->string('description')->nullable();
             $table->timestamps();
         });
-        /*DB::table('user_types')->insert([
+        DB::table('user_types')->insert([
             ['name' => 'superadmin', 'description' => 'Administrateur système'],
             ['name' => 'classique', 'description' => 'Utilisateur classique'],
             ['name' => 'premium', 'description' => 'Utilisateur premium'],
             ['name' => 'entreprise', 'description' => 'Compte entreprise'],
-        ]);*/
+        ]);
     }
 
     /**
