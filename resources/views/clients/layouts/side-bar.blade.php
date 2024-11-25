@@ -57,9 +57,6 @@
                                         <a href="{{route('entreprise.index')}}">Home</a>
                                     </li>
                                     <li>
-                                        <a href="{{route('entreprise.edit')}}">Profile</a>
-                                    </li>
-                                    <li>
                                         <a href="{{route('entreprise.employees.index')}}">Mes Employés</a>
                                     </li>
                                 </ul>

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Clients;
 
+use App\Helpers\SlugHelper;
 use App\Http\Controllers\Controller;
 use App\Mail\EmailVerification as MailEmailVerification;
 use App\Models\EmailVerification;
@@ -47,6 +48,8 @@ class EntrepriseController extends Controller
         try {
             DB::beginTransaction();
 
+            $nextId = DB::table('users')->max('id') + 1;
+
             // Traitement de la photo
             $photoPath = null;
             if ($request->hasFile('photo')) {
@@ -64,6 +67,7 @@ class EntrepriseController extends Controller
                 'photo_profile' => $photoPath,
                 'user_type_id' => UserType::where('name', 'entreprise')->first()->id,
                 'is_active' => false,
+                'slug' => SlugHelper::generateUniqueSlug($request->nom . ' ' . $request->prenom, $nextId),
             ]);
 
             // Création de l'entreprise

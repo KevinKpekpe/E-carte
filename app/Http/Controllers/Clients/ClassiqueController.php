@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Clients;
 
+use App\Helpers\SlugHelper;
 use App\Http\Controllers\Controller;
 use App\Mail\EmailVerification as MailEmailVerification;
 use App\Models\EmailVerification;
@@ -44,6 +45,8 @@ class ClassiqueController extends Controller
         try {
             DB::beginTransaction();
 
+            $nextId = DB::table('users')->max('id') + 1;
+
             // Traitement de la photo
             $photoPath = null;
             if ($request->hasFile('photo')) {
@@ -61,6 +64,7 @@ class ClassiqueController extends Controller
                 'photo_profile' => $photoPath,
                 'user_type_id' => UserType::where('name', 'classique')->first()->id,
                 'is_active' => false,
+                'slug' => SlugHelper::generateUniqueSlug($request->nom . ' ' . $request->prenom, $nextId),
             ]);
 
             // Enregistrement des réseaux sociaux

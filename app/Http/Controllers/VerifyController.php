@@ -24,7 +24,7 @@ class VerifyController extends Controller
         }
 
         $user = $verification->user;
-        $user->update(['email_verified_at' => Carbon::now()]);
+        $user->update(['email_verified_at' => Carbon::now(),'']);
         $verification->delete();
 
         return redirect()->route('login')

@@ -18,7 +18,8 @@ class Employee extends Model
         'photo_profile',
         'vcard_file',
         'is_active',
-        'expiration_date'
+        'expiration_date',
+        'slug'
     ];
 
     protected $casts = [

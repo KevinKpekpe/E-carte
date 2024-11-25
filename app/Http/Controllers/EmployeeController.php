@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Helpers\SlugHelper;
 use App\Models\Employee;
 use App\Traits\VcardGenerator;
 use Illuminate\Http\Request;
@@ -97,6 +98,8 @@ class EmployeeController extends Controller
         try {
             DB::beginTransaction();
 
+            $nextId = DB::table('employees')->max('id') + 1;
+
             // Traitement de la photo
             $photoPath = null;
             if ($request->hasFile('photo_profile')) {
@@ -114,6 +117,7 @@ class EmployeeController extends Controller
                 'photo_profile' => $photoPath,
                 'is_active' => true,
                 'expiration_date' => now()->addYear(),
+                'slug' => SlugHelper::generateUniqueSlug($request->nom . ' ' . $request->prenom, $nextId)
             ]);
 
             // Génération du fichier VCard
@@ -122,12 +126,12 @@ class EmployeeController extends Controller
 
             DB::commit();
 
-            return redirect()->route('employees.index')
+            return redirect()->route('entreprise.employees.index')
             ->with('success', 'Employé ajouté avec succès');
         } catch (\Exception $e) {
             DB::rollBack();
             return redirect()->back()
-                ->with('error', 'Une erreur est survenue lors de l\'ajout de l\'employé.')
+                ->with('error', 'Une erreur est survenue lors de l\'ajout de l\'employé.' .$e)
                 ->withInput();
         }
     }

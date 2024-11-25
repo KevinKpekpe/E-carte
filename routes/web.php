@@ -21,7 +21,6 @@ Route::get('/', function () {
 // Routes protégées pour les utilisateurs classiques
 Route::prefix('classique')->name('classique.')->middleware(['auth', 'user.type:classique','verified'])->group(function () {
     Route::view('/', 'clients.classique.index')->name('index');
-    Route::view('/change/password', 'clients.classique.change-password')->name('password');
     Route::put('/update-password', [PasswordChangeController::class, 'updatePassword'])->name('update-password');
 });
 
