@@ -33,7 +33,7 @@
                                     <label for="nom" class="form-label">Nom</label>
                                     <input type="text" class="form-control @error('nom') is-invalid @enderror"
                                         id="nom" name="nom"
-                                        value="{{ old('nom', isset($employee) ? $employee->nom : '') }}" required>
+                                        value="{{ old('nom', isset($employee) ? $employee->nom : '') }}">
                                     @error('nom')
                                         <span class="invalid-feedback">{{ $message }}</span>
                                     @enderror
@@ -44,7 +44,7 @@
                                     <label for="prenom" class="form-label">Prénom</label>
                                     <input type="text" class="form-control @error('prenom') is-invalid @enderror"
                                         id="prenom" name="prenom"
-                                        value="{{ old('prenom', isset($employee) ? $employee->prenom : '') }}" required>
+                                        value="{{ old('prenom', isset($employee) ? $employee->prenom : '') }}" >
                                     @error('prenom')
                                         <span class="invalid-feedback">{{ $message }}</span>
                                     @enderror
@@ -58,7 +58,7 @@
                                     <label for="email" class="form-label">Email</label>
                                     <input type="email" class="form-control @error('email') is-invalid @enderror"
                                         id="email" name="email"
-                                        value="{{ old('email', isset($employee) ? $employee->email : '') }}" required>
+                                        value="{{ old('email', isset($employee) ? $employee->email : '') }}" >
                                     @error('email')
                                         <span class="invalid-feedback">{{ $message }}</span>
                                     @enderror
@@ -70,7 +70,7 @@
                                     <input type="text" class="form-control @error('telephone') is-invalid @enderror"
                                         id="telephone" name="telephone"
                                         value="{{ old('telephone', isset($employee) ? $employee->telephone : '') }}"
-                                        required>
+                                        >
                                     @error('telephone')
                                         <span class="invalid-feedback">{{ $message }}</span>
                                     @enderror
@@ -82,7 +82,7 @@
                             <label for="profession" class="form-label">Profession</label>
                             <input type="text" class="form-control @error('profession') is-invalid @enderror"
                                 id="profession" name="profession"
-                                value="{{ old('profession', isset($employee) ? $employee->profession : '') }}" required>
+                                value="{{ old('profession', isset($employee) ? $employee->profession : '') }}" >
                             @error('profession')
                                 <span class="invalid-feedback">{{ $message }}</span>
                             @enderror

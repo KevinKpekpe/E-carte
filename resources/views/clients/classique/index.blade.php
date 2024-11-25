@@ -41,20 +41,6 @@
                 </div>
             </div>
         </div>
-
-        <div class="card">
-            <form method="POST" action="" class="card-body">
-                @csrf
-                @method('PUT')
-                <span class="input-icon icon-end">
-                    <textarea rows="3" class="form-control" name="description"
-                        placeholder="Description personnelle">{{ auth()->user()->description ?? '' }}</textarea>
-                </span>
-                <div class="pt-1 float-end">
-                    <button type="submit" class="btn btn-primary btn-sm waves-effect waves-light">Mettre à jour</button>
-                </div>
-            </form>
-        </div>
     </div>
 
     <div class="col-sm-4">
@@ -66,7 +52,7 @@
                         <i class="mdi mdi-dots-vertical"></i>
                     </a>
                     <div class="dropdown-menu dropdown-menu-end">
-                        <a href="" class="dropdown-item">Modifier mes infos</a>
+                        <a href="{{route('classique.password')}}" class="dropdown-item">Changer de mot de passe</a>
                         <form action="" method="POST">
                             @csrf
                             @method('DELETE')

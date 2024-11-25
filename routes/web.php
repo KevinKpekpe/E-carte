@@ -19,8 +19,10 @@ Route::get('/', function () {
 
 
 // Routes protégées pour les utilisateurs classiques
-Route::middleware(['auth', 'user.type:classique','verified'])->group(function () {
-    Route::view('/classique', 'clients.classique.index')->name('classique.index');
+Route::prefix('classique')->name('classique.')->middleware(['auth', 'user.type:classique','verified'])->group(function () {
+    Route::view('/', 'clients.classique.index')->name('index');
+    Route::view('/change/password', 'clients.classique.change-password')->name('password');
+    Route::put('/update-password', [PasswordChangeController::class, 'updatePassword'])->name('update-password');
 });
 
 // Routes protégées pour les utilisateurs classiques
@@ -30,7 +32,7 @@ Route::prefix('entreprise')->name('entreprise.')->middleware(['auth', 'user.type
     Route::view('/edit', 'clients.entreprise.edit')->name('edit');
     Route::put('/update', [EntrepriseController::class, 'update'])->name('update');
     Route::put('/update-password', [PasswordChangeController::class, 'updatePassword'])
-    ->name('entreprise.update-password');
+    ->name('update-password');
     Route::resource('employees', EmployeeController::class);
 });
 

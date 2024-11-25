@@ -7,8 +7,8 @@
                     <div class="row justify-content-between">
                         <div class="col-md-4">
                             <div class="mt-3 mt-md-0">
-                                <a href="{{route('entreprise.employees.create')}}" class="btn btn-success waves-effect waves-light"
-                                    >
+                                <a href="{{ route('entreprise.employees.create') }}"
+                                    class="btn btn-success waves-effect waves-light">
                                     <i class="mdi mdi-plus-circle me-1"></i> Ajouter un employé
                                 </a>
                             </div>
@@ -21,8 +21,10 @@
                                     <select class="form-select my-1 my-md-0" id="sort" name="sort">
                                         <option value="">Tous</option>
                                         <option value="1" {{ request('sort') == '1' ? 'selected' : '' }}>Nom</option>
-                                        <option value="2" {{ request('sort') == '2' ? 'selected' : '' }}>Profession</option>
-                                        <option value="3" {{ request('sort') == '3' ? 'selected' : '' }}>Statut</option>
+                                        <option value="2" {{ request('sort') == '2' ? 'selected' : '' }}>Profession
+                                        </option>
+                                        <option value="3" {{ request('sort') == '3' ? 'selected' : '' }}>Statut
+                                        </option>
                                     </select>
                                 </div>
                                 <label for="search" class="visually-hidden">Rechercher</label>
@@ -45,14 +47,14 @@
         <div class="col-xl-12">
             <div class="card">
                 <div class="card-body">
-                    @if(session('success'))
+                    @if (session('success'))
                         <div class="alert alert-success alert-dismissible fade show" role="alert">
                             {{ session('success') }}
                             <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                         </div>
                     @endif
 
-                    @if(session('error'))
+                    @if (session('error'))
                         <div class="alert alert-danger alert-dismissible fade show" role="alert">
                             {{ session('error') }}
                             <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
@@ -76,9 +78,9 @@
                                 @forelse($employees as $employee)
                                     <tr>
                                         <td>
-                                            @if($employee->photo_profile)
-                                                <img src="{{ Storage::url($employee->photo_profile) }}"
-                                                    alt="photo" class="rounded-circle me-2" width="32">
+                                            @if ($employee->photo_profile)
+                                                <img src="{{ Storage::url($employee->photo_profile) }}" alt="photo"
+                                                    class="rounded-circle me-2" width="32">
                                             @endif
                                             {{ $employee->nom }} {{ $employee->prenom }}
                                         </td>
@@ -92,16 +94,23 @@
                                             </span>
                                         </td>
                                         <td>
-                                            <button type="button" class="btn btn-sm btn-primary edit-employee"
-                                                data-id="{{ $employee->id }}">
+                                            <a href="{{ route('entreprise.employees.edit', $employee) }}"
+                                                class="btn btn-sm btn-primary">
                                                 <i class="fas fa-edit"></i>
-                                            </button>
-                                            <button type="button" class="btn btn-sm btn-danger delete-employee"
-                                                data-id="{{ $employee->id }}">
-                                                <i class="fas fa-trash"></i>
-                                            </button>
-                                            <a href="{{ Storage::url($employee->vcard_file) }}"
-                                                class="btn btn-sm btn-info" download>
+                                            </a>
+
+                                            <form action="{{ route('entreprise.employees.destroy', $employee) }}"
+                                                method="POST" class="d-inline">
+                                                @csrf
+                                                @method('DELETE')
+                                                <button type="submit" class="btn btn-sm btn-danger"
+                                                    onclick="return confirm('Êtes-vous sûr de vouloir supprimer cet employé ?')">
+                                                    <i class="fas fa-trash"></i>
+                                                </button>
+                                            </form>
+
+                                            <a href="{{ Storage::url($employee->vcard_file) }}" class="btn btn-sm btn-info"
+                                                download>
                                                 <i class="fas fa-download"></i>
                                             </a>
                                         </td>

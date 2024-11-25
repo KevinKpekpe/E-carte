@@ -65,16 +65,25 @@
                             </div>
 
 
-                            <a href="contacts-profile.html" class="dropdown-item notify-item">
+                            @if (auth()->user()->userType->name === "premium")
+                                <a href="{{route('premium.index')}}" class="dropdown-item notify-item">
                                 <i class="fe-user"></i>
                                 <span>Mon compte </span>
                             </a>
-
-
-                            <a href="auth-lock-screen.html" class="dropdown-item notify-item">
-                                <i class="fe-lock"></i>
-                                <span>Verouiller</span>
+                            @endif
+                            @if (auth()->user()->userType->name === "classique")
+                                <a href="{{route('classique.index')}}" class="dropdown-item notify-item">
+                                <i class="fe-user"></i>
+                                <span>Mon compte </span>
                             </a>
+                            @endif
+                            @if (auth()->user()->userType->name === "entreprise")
+                                <a href="{{route('entreprise.index')}}" class="dropdown-item notify-item">
+                                <i class="fe-user"></i>
+                                <span>Mon compte </span>
+                            </a>
+                            @endif
+
 
                             <div class="dropdown-divider"></div>
 
