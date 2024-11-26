@@ -96,6 +96,7 @@
                                     {{ auth()->user()->is_active ? 'Désactiver' : 'Activer' }} mon compte
                                 </button>
                             </form>
+                            <a href="{{route('classique.client.show',auth()->user()->slug)}}" class="dropdown-item">Voir mes infos</a>
                         </div>
                     </div>
 

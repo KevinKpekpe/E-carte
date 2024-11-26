@@ -140,17 +140,17 @@ class EmployeeController extends Controller
         Gate::authorize('manage',$employee);
 
         $request->validate([
-            'nom' => 'required|string|max:255',
-            'prenom' => 'required|string|max:255',
+            'nom' => 'required|string|max:20',
+            'prenom' => 'required|string|max:20',
             'email' => 'required|string|email|max:255|unique:employees,email,' . $employee->id,
             'telephone' => 'required|string|max:20',
             'profession' => 'required|string|max:255',
             'photo_profile' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
         ], [
             'nom.required' => 'Le nom est obligatoire',
-            'nom.max' => 'Le nom ne peut pas dépasser 255 caractères',
+            'nom.max' => 'Le nom ne peut pas dépasser 20 caractères',
             'prenom.required' => 'Le prénom est obligatoire',
-            'prenom.max' => 'Le prénom ne peut pas dépasser 255 caractères',
+            'prenom.max' => 'Le prénom ne peut pas dépasser 20 caractères',
             'email.required' => 'L\'adresse email est obligatoire',
             'email.email' => 'L\'adresse email n\'est pas valide',
             'email.max' => 'L\'adresse email ne peut pas dépasser 255 caractères',

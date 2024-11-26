@@ -22,6 +22,7 @@ Route::get('/', function () {
 Route::prefix('classique')->name('classique.')->middleware(['auth', 'user.type:classique','verified'])->group(function () {
     Route::view('/', 'clients.classique.index')->name('index');
     Route::put('/update-password', [PasswordChangeController::class, 'updatePassword'])->name('update-password');
+    Route::get('/profile/{slug}', [ClassiqueController::class, 'show'])->name('client.show');
 });
 
 // Routes protégées pour les utilisateurs classiques
@@ -113,4 +114,6 @@ Route::post('/reset-password', [ForgotPasswordController::class, 'resetPassword'
 // Route pour afficher l'écran de verrouillage
 Route::get('/lockscreen', [LoginController::class, 'show'])->name('lockscreen.show');
 Route::post('/lockscreen/unlock', [LoginController::class, 'unlock'])->name('lockscreen.unlock');
+
+
 

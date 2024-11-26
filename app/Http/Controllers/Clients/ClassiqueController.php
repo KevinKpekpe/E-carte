@@ -104,4 +104,19 @@ class ClassiqueController extends Controller
                 ->withInput();
         }
     }
+    public function show($slug)
+    {
+        try {
+            // Recherche de l'utilisateur par son slug
+            $user = User::where('slug', $slug)
+                ->where('user_type_id', UserType::where('name', 'classique')->first()->id)
+                ->with(['socialLinks']) 
+                ->firstOrFail();
+
+            return view('clients.show.show', compact('user'));
+        } catch (\Exception $e) {
+            return redirect()->route('classique.index')
+                ->with('error', 'Profil introuvable.');
+        }
+    }
 }
