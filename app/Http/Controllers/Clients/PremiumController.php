@@ -4,6 +4,8 @@ namespace App\Http\Controllers\Clients;
 
 use App\Helpers\SlugHelper;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Clients\PremiumRegisterRequest;
+use App\Http\Requests\Clients\PremiumUpdateRequest;
 use App\Mail\EmailVerification as MailEmailVerification;
 use App\Models\EmailVerification;
 use App\Models\User;
@@ -11,7 +13,6 @@ use App\Models\UserType;
 use App\Models\SocialLink;
 use App\Traits\VcardGenerator;
 use Carbon\Carbon;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
@@ -20,34 +21,34 @@ use Illuminate\Support\Str;
 
 class PremiumController extends Controller
 {
+    use VcardGenerator;
+
+    /**
+     * Affiche la page d'accueil
+     */
     public function index()
     {
         return view('clients.premium.index');
     }
+
+    /**
+     * Affiche le formulaire de création
+     */
     public function create()
     {
         return view('clients.premium.form');
     }
-    use VcardGenerator;
 
-    public function register(Request $request)
+    /**
+     * Enregistre un nouveau compte premium
+     */
+    public function register(PremiumRegisterRequest $request)
     {
-        $request->validate([
-            'nom' => 'required|string|max:255',
-            'prenom' => 'required|string|max:255',
-            'email' => 'required|string|email|max:255|unique:users',
-            'password' => 'required|string|min:8|confirmed',
-            'telephone' => 'required|string|max:20',
-            'profession' => 'required|string|max:255',
-            'photo' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
-            'social_links' => 'nullable|array',
-            'social_links.*.platform' => 'required|string|max:255',
-            'social_links.*.url' => 'required|url',
-        ]);
-
         try {
             DB::beginTransaction();
+
             $nextId = DB::table('users')->max('id') + 1;
+
             // Traitement de la photo
             $photoPath = null;
             if ($request->hasFile('photo')) {
@@ -95,33 +96,33 @@ class PremiumController extends Controller
 
             // Envoi de l'email de vérification
             Mail::to($user->email)->send(new MailEmailVerification($user, $token));
+
             DB::commit();
 
             return redirect()->route('verification.notice')
                 ->with('success', 'Compte créé avec succès ! Veuillez vérifier votre email.');
         } catch (\Exception $e) {
             DB::rollBack();
-            return back()->with('error', 'Une erreur est survenue lors de l\'inscription.' . $e)
+            return back()
+                ->with('error', 'Une erreur est survenue lors de l\'inscription : ' . $e->getMessage())
                 ->withInput();
         }
     }
-    public function edit(){
+
+    /**
+     * Affiche le formulaire d'édition
+     */
+    public function edit()
+    {
         return view('clients.premium.edit');
     }
-    public function update(Request $request)
+
+    /**
+     * Met à jour le profil premium
+     */
+    public function update(PremiumUpdateRequest $request)
     {
         $user = auth()->user();
-
-        $request->validate([
-            'nom' => 'required|string|max:255',
-            'prenom' => 'required|string|max:255',
-            'telephone' => 'required|string|max:20',
-            'profession' => 'required|string|max:255',
-            'photo' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
-            'social_links' => 'nullable|array',
-            'social_links.*.platform' => 'required|string|max:255',
-            'social_links.*.url' => 'required|url',
-        ]);
 
         try {
             DB::beginTransaction();
@@ -129,7 +130,6 @@ class PremiumController extends Controller
             // Gestion de la photo
             $photoPath = $user->photo_profile;
             if ($request->hasFile('photo')) {
-                // Suppression de l'ancienne photo si elle existe
                 if ($photoPath && Storage::disk('public')->exists($photoPath)) {
                     Storage::disk('public')->delete($photoPath);
                 }
@@ -146,10 +146,8 @@ class PremiumController extends Controller
             ]);
 
             // Mise à jour des réseaux sociaux
-            // Suppression des anciens liens
             SocialLink::where('user_id', $user->id)->delete();
 
-            // Ajout des nouveaux liens
             if ($request->has('social_links')) {
                 foreach ($request->social_links as $link) {
                     if (!empty($link['platform']) && !empty($link['url'])) {
@@ -162,23 +160,40 @@ class PremiumController extends Controller
                 }
             }
 
-            // Suppression de l'ancien fichier VCard s'il existe
+            // Mise à jour du VCard
             if ($user->vcard_file && Storage::exists($user->vcard_file)) {
                 Storage::delete($user->vcard_file);
             }
-
-            // Génération du nouveau fichier VCard
             $vcardPath = $this->generateVcard($user);
             $user->update(['vcard_file' => $vcardPath]);
 
             DB::commit();
 
             return redirect()->route('premium.edit')
-            ->with('success', 'Votre profil a été mis à jour avec succès.');
+                ->with('success', 'Votre profil a été mis à jour avec succès.');
         } catch (\Exception $e) {
             DB::rollBack();
-            return back()->with('error', 'Une erreur est survenue lors de la mise à jour du profil: ' . $e->getMessage())
+            return back()
+                ->with('error', 'Une erreur est survenue lors de la mise à jour du profil : ' . $e->getMessage())
                 ->withInput();
+        }
+    }
+
+    /**
+     * Affiche le profil premium
+     */
+    public function show($slug)
+    {
+        try {
+            $user = User::where('slug', $slug)
+                ->where('user_type_id', UserType::where('name', 'premium')->first()->id)
+                ->with(['socialLinks'])
+                ->firstOrFail();
+
+            return view('clients.premium.show', compact('user'));
+        } catch (\Exception $e) {
+            return redirect()->route('home')
+                ->with('error', 'Profil premium introuvable.');
         }
     }
 }

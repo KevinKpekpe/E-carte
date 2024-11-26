@@ -4,6 +4,8 @@ namespace App\Http\Controllers\Clients;
 
 use App\Helpers\SlugHelper;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Clients\EntrepriseRegisterRequest;
+use App\Http\Requests\Clients\EntrepriseUpdateRequest;
 use App\Mail\EmailVerification as MailEmailVerification;
 use App\Models\EmailVerification;
 use App\Models\User;
@@ -12,7 +14,6 @@ use App\Models\SocialLink;
 use App\Models\Company;
 use App\Traits\VcardGenerator;
 use Carbon\Carbon;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
@@ -23,28 +24,19 @@ class EntrepriseController extends Controller
 {
     use VcardGenerator;
 
+    /**
+     * Affiche le formulaire de création
+     */
     public function create()
     {
         return view('clients.entreprise.form');
     }
 
-    public function register(Request $request)
+    /**
+     * Enregistre une nouvelle entreprise
+     */
+    public function register(EntrepriseRegisterRequest $request)
     {
-        $request->validate([
-            'nom' => 'required|string|max:255',
-            'prenom' => 'required|string|max:255',
-            'email' => 'required|string|email|max:255|unique:users',
-            'password' => 'required|string|min:8|confirmed',
-            'telephone' => 'required|string|max:20',
-            'profession' => 'required|string|max:255',
-            'photo' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
-            'nom_entreprise' => 'required|string|max:255',
-            'nombre_employes' => 'required|integer',
-            'social_links' => 'nullable|array',
-            'social_links.*.platform' => 'required|string|max:255',
-            'social_links.*.url' => 'required|url',
-        ]);
-
         try {
             DB::beginTransaction();
 
@@ -104,17 +96,22 @@ class EntrepriseController extends Controller
 
             // Envoi de l'email de vérification
             Mail::to($user->email)->send(new MailEmailVerification($user, $token));
+
             DB::commit();
 
             return redirect()->route('verification.notice')
                 ->with('success', 'Compte créé avec succès ! Veuillez vérifier votre email.');
         } catch (\Exception $e) {
             DB::rollBack();
-            return back()->with('error', 'Une erreur est survenue lors de l\'inscription.')
+            return back()
+                ->with('error', 'Une erreur est survenue lors de l\'inscription : ' . $e->getMessage())
                 ->withInput();
         }
     }
 
+    /**
+     * Affiche le formulaire d'édition
+     */
     public function edit()
     {
         $user = auth()->user();
@@ -122,22 +119,12 @@ class EntrepriseController extends Controller
         return view('clients.entreprises.edit', compact('company'));
     }
 
-    public function update(Request $request)
+    /**
+     * Met à jour le profil entreprise
+     */
+    public function update(EntrepriseUpdateRequest $request)
     {
         $user = auth()->user();
-
-        $request->validate([
-            'nom' => 'required|string|max:255',
-            'prenom' => 'required|string|max:255',
-            'telephone' => 'required|string|max:20',
-            'profession' => 'required|string|max:255',
-            'photo' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
-            'nom_entreprise' => 'required|string|max:255',
-            'nombre_employes' => 'required|integer',
-            'social_links' => 'nullable|array',
-            'social_links.*.platform' => 'required|string|max:255',
-            'social_links.*.url' => 'required|url',
-        ]);
 
         try {
             DB::beginTransaction();
@@ -194,8 +181,27 @@ class EntrepriseController extends Controller
                 ->with('success', 'Votre profil a été mis à jour avec succès.');
         } catch (\Exception $e) {
             DB::rollBack();
-            return back()->with('error', 'Une erreur est survenue lors de la mise à jour du profil.')
+            return back()
+                ->with('error', 'Une erreur est survenue lors de la mise à jour du profil : ' . $e->getMessage())
                 ->withInput();
+        }
+    }
+
+    /**
+     * Affiche le profil d'une entreprise
+     */
+    public function show($slug)
+    {
+        try {
+            $user = User::where('slug', $slug)
+                ->where('user_type_id', UserType::where('name', 'entreprise')->first()->id)
+                ->with(['socialLinks', 'company'])
+                ->firstOrFail();
+
+            return view('clients.entreprises.show', compact('user'));
+        } catch (\Exception $e) {
+            return redirect()->route('home')
+                ->with('error', 'Profil entreprise introuvable.');
         }
     }
 }

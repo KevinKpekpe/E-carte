@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Helpers\SlugHelper;
+use App\Http\Requests\Employee\StoreEmployeeRequest;
+use App\Http\Requests\Employee\UpdateEmployeeRequest;
 use App\Models\Employee;
 use App\Traits\VcardGenerator;
 use Illuminate\Http\Request;
@@ -14,6 +16,9 @@ class EmployeeController extends Controller
 {
     use VcardGenerator;
 
+    /**
+     * Affiche la liste des employés avec recherche et tri
+     */
     public function index(Request $request)
     {
         $query = Employee::where('company_id', auth()->user()->company->id);
@@ -49,17 +54,27 @@ class EmployeeController extends Controller
         return view('clients.entreprise.employee.index', compact('employees'));
     }
 
+    /**
+     * Affiche le formulaire de création
+     */
     public function create()
     {
         return view('clients.entreprise.employee.form');
     }
+
+    /**
+     * Affiche le formulaire d'édition
+     */
     public function edit(Employee $employee)
     {
         Gate::authorize('manage', $employee);
         return view('clients.entreprise.employee.form', compact('employee'));
     }
 
-    public function store(Request $request)
+    /**
+     * Enregistre un nouvel employé
+     */
+    public function store(StoreEmployeeRequest $request)
     {
         $company = auth()->user()->company;
 
@@ -69,31 +84,6 @@ class EmployeeController extends Controller
                 ->with('error', 'Vous avez atteint la limite du nombre d\'employés autorisés.')
                 ->withInput();
         }
-
-        $request->validate([
-            'nom' => 'required|string|max:255',
-            'prenom' => 'required|string|max:255',
-            'email' => 'required|string|email|max:255|unique:employees',
-            'telephone' => 'required|string|max:20',
-            'profession' => 'required|string|max:255',
-            'photo_profile' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
-        ], [
-            'nom.required' => 'Le nom est obligatoire',
-            'nom.max' => 'Le nom ne peut pas dépasser 255 caractères',
-            'prenom.required' => 'Le prénom est obligatoire',
-            'prenom.max' => 'Le prénom ne peut pas dépasser 255 caractères',
-            'email.required' => 'L\'adresse email est obligatoire',
-            'email.email' => 'L\'adresse email n\'est pas valide',
-            'email.max' => 'L\'adresse email ne peut pas dépasser 255 caractères',
-            'email.unique' => 'Cette adresse email est déjà utilisée',
-            'telephone.required' => 'Le numéro de téléphone est obligatoire',
-            'telephone.max' => 'Le numéro de téléphone ne peut pas dépasser 20 caractères',
-            'profession.required' => 'La profession est obligatoire',
-            'profession.max' => 'La profession ne peut pas dépasser 255 caractères',
-            'photo_profile.image' => 'Le fichier doit être une image',
-            'photo_profile.mimes' => 'L\'image doit être de type : jpeg, png, jpg, gif',
-            'photo_profile.max' => 'L\'image ne doit pas dépasser 2Mo',
-        ]);
 
         try {
             DB::beginTransaction();
@@ -127,42 +117,21 @@ class EmployeeController extends Controller
             DB::commit();
 
             return redirect()->route('entreprise.employees.index')
-            ->with('success', 'Employé ajouté avec succès');
+                ->with('success', 'Employé ajouté avec succès');
         } catch (\Exception $e) {
             DB::rollBack();
             return redirect()->back()
-                ->with('error', 'Une erreur est survenue lors de l\'ajout de l\'employé.' .$e)
+                ->with('error', 'Une erreur est survenue lors de l\'ajout de l\'employé : ' . $e->getMessage())
                 ->withInput();
         }
     }
-    public function update(Request $request, Employee $employee)
-    {
-        Gate::authorize('manage',$employee);
 
-        $request->validate([
-            'nom' => 'required|string|max:20',
-            'prenom' => 'required|string|max:20',
-            'email' => 'required|string|email|max:255|unique:employees,email,' . $employee->id,
-            'telephone' => 'required|string|max:20',
-            'profession' => 'required|string|max:255',
-            'photo_profile' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
-        ], [
-            'nom.required' => 'Le nom est obligatoire',
-            'nom.max' => 'Le nom ne peut pas dépasser 20 caractères',
-            'prenom.required' => 'Le prénom est obligatoire',
-            'prenom.max' => 'Le prénom ne peut pas dépasser 20 caractères',
-            'email.required' => 'L\'adresse email est obligatoire',
-            'email.email' => 'L\'adresse email n\'est pas valide',
-            'email.max' => 'L\'adresse email ne peut pas dépasser 255 caractères',
-            'email.unique' => 'Cette adresse email est déjà utilisée',
-            'telephone.required' => 'Le numéro de téléphone est obligatoire',
-            'telephone.max' => 'Le numéro de téléphone ne peut pas dépasser 20 caractères',
-            'profession.required' => 'La profession est obligatoire',
-            'profession.max' => 'La profession ne peut pas dépasser 255 caractères',
-            'photo_profile.image' => 'Le fichier doit être une image',
-            'photo_profile.mimes' => 'L\'image doit être de type : jpeg, png, jpg, gif',
-            'photo_profile.max' => 'L\'image ne doit pas dépasser 2Mo',
-        ]);
+    /**
+     * Met à jour un employé
+     */
+    public function update(UpdateEmployeeRequest $request, Employee $employee)
+    {
+        Gate::authorize('manage', $employee);
 
         try {
             DB::beginTransaction();
@@ -193,15 +162,18 @@ class EmployeeController extends Controller
             DB::commit();
 
             return redirect()->route('entreprise.employees.index')
-            ->with('success', 'Informations de l\'employé mises à jour avec succès');
+                ->with('success', 'Informations de l\'employé mises à jour avec succès');
         } catch (\Exception $e) {
             DB::rollBack();
             return redirect()->back()
-                ->with('error', 'Une erreur est survenue lors de la mise à jour.')
+                ->with('error', 'Une erreur est survenue lors de la mise à jour : ' . $e->getMessage())
                 ->withInput();
         }
     }
 
+    /**
+     * Supprime un employé
+     */
     public function destroy(Employee $employee)
     {
         Gate::authorize('manage', $employee);
@@ -221,12 +193,12 @@ class EmployeeController extends Controller
             DB::commit();
 
             return redirect()->route('entreprise.employees.index')
-            ->with('success', ' Employé supprimé avec success');
+                ->with('success', 'Employé supprimé avec succès');
         } catch (\Exception $e) {
             DB::rollBack();
             return response()->json([
                 'status' => 'error',
-                'message' => 'Une erreur est survenue lors de la suppression.'
+                'message' => 'Une erreur est survenue lors de la suppression : ' . $e->getMessage()
             ]);
         }
     }
