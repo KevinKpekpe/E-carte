@@ -16,6 +16,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 
 class ClassiqueController extends Controller
@@ -145,17 +146,11 @@ class ClassiqueController extends Controller
      */
     public function edit($slug)
     {
-        try {
             $user = User::where('slug', $slug)
                 ->where('user_type_id', UserType::where('name', 'classique')->first()->id)
                 ->with(['socialLinks'])
                 ->firstOrFail();
-
             return view('clients.classique.edit', compact('user'));
-        } catch (\Exception $e) {
-            return redirect()->route('classique.index')
-                ->with('error', 'Profil introuvable.');
-        }
     }
 
     /**
@@ -220,36 +215,49 @@ class ClassiqueController extends Controller
                 ->withInput();
         }
     }
-
     /**
-     * Supprime un utilisateur
+     * Supprime le compte premium
      *
-     * @param string $slug
      * @return \Illuminate\Http\RedirectResponse
      */
-    public function destroy($slug)
+    public function destroy()
     {
         try {
             DB::beginTransaction();
 
-            $user = User::where('slug', $slug)
-                ->where('user_type_id', UserType::where('name', 'classique')->first()->id)
-                ->firstOrFail();
+            $user = auth()->user();
+
+            // Suppression de la photo de profil
+            if ($user->photo_profile && Storage::disk('public')->exists($user->photo_profile)) {
+                Storage::disk('public')->delete($user->photo_profile);
+            }
+
+            // Suppression du fichier VCard
+            if ($user->vcard_file && Storage::exists($user->vcard_file)) {
+                Storage::delete($user->vcard_file);
+            }
 
             // Suppression des liens sociaux
-            $user->socialLinks()->delete();
+            SocialLink::where('user_id', $user->id)->delete();
+
+            // Suppression des vérifications d'email
+            EmailVerification::where('user_id', $user->id)->delete();
 
             // Suppression de l'utilisateur
             $user->delete();
 
             DB::commit();
 
-            return redirect()->route('classique.index')
-                ->with('success', 'Compte supprimé avec succès.');
+            // Déconnexion de l'utilisateur
+            auth()->logout();
+
+            return redirect()->route('login')
+            ->with('success', 'Votre compte a été supprimé avec succès.');
         } catch (\Exception $e) {
             DB::rollBack();
             return back()
-                ->with('error', 'Une erreur est survenue lors de la suppression du compte : ');
+                ->with('error', 'Une erreur est survenue lors de la suppression du compte : ' . $e->getMessage());
         }
     }
+
 }

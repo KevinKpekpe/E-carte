@@ -109,11 +109,12 @@
                     </a>
                     <div class="dropdown-menu dropdown-menu-end">
                         <a href="{{route('entreprise.edit')}}" class="dropdown-item">Modifier mes infos</a>
-                        <form action="" method="POST">
+                        <form action="{{ route('entreprise.destroy') }}" method="POST">
                             @csrf
                             @method('DELETE')
                             <button type="submit" class="dropdown-item text-danger">Supprimer mon compte</button>
                         </form>
+                        <a href="{{route('entreprise.client.show',auth()->user()->slug)}}" class="dropdown-item">Voir mes infos</a>
                     </div>
                 </div>
 

@@ -22,9 +22,13 @@ Route::get('/', function () {
 Route::prefix('classique')->name('classique.')->middleware(['auth', 'user.type:classique','verified'])->group(function () {
     Route::view('/', 'clients.classique.index')->name('index');
     Route::put('/update-password', [PasswordChangeController::class, 'updatePassword'])->name('update-password');
-    Route::get('/profile/{slug}', [ClassiqueController::class, 'show'])->name('client.show');
+    Route::delete('/delete', [ClassiqueController::class, 'destroy'])
+    ->name('destroy');
 });
 
+Route::get('classique/profile/{slug}', [ClassiqueController::class, 'show'])->name('classique.client.show');
+Route::get('premium/profile/{slug}', [PremiumController::class, 'show'])->name('premium.client.show');
+Route::get('entreprise/profile/{slug}', [EntrepriseController::class,'show'])->name('entreprise.client.show');
 // Routes protégées pour les utilisateurs classiques
 Route::prefix('entreprise')->name('entreprise.')->middleware(['auth', 'user.type:entreprise', 'verified'])->group(function () {
     Route::view('/', 'clients.entreprise.index')->name('index');
@@ -33,6 +37,7 @@ Route::prefix('entreprise')->name('entreprise.')->middleware(['auth', 'user.type
     Route::put('/update', [EntrepriseController::class, 'update'])->name('update');
     Route::put('/update-password', [PasswordChangeController::class, 'updatePassword'])
     ->name('update-password');
+    Route::delete('/delete', [EntrepriseController::class, 'destroy'])->name('destroy');
     Route::resource('employees', EmployeeController::class);
 });
 
@@ -44,6 +49,7 @@ Route::middleware(['auth', 'user.type:premium', 'verified'])->group(function () 
     Route::put('/premium/update',[PremiumController::class,'update'])->name('premium.update');
     Route::put('/premium/update-password', [PasswordChangeController::class, 'updatePassword'])
     ->name('premium.update-password');
+    Route::delete('/delete', [PremiumController::class, 'destroy'])->name('premium.destroy');
 });
 
 // Routes protégées pour créer les Utilisateurs

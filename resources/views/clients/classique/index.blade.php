@@ -85,7 +85,7 @@
                             <i class="mdi mdi-dots-vertical"></i>
                         </a>
                         <div class="dropdown-menu dropdown-menu-end">
-                            <form action="" method="POST">
+                            <form action="{{route('classique.destroy')}}" method="POST">
                                 @csrf
                                 @method('DELETE')
                                 <button type="submit" class="dropdown-item text-danger">Supprimer mon compte</button>

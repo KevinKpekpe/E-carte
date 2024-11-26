@@ -192,16 +192,68 @@ class EntrepriseController extends Controller
      */
     public function show($slug)
     {
-        try {
             $user = User::where('slug', $slug)
                 ->where('user_type_id', UserType::where('name', 'entreprise')->first()->id)
                 ->with(['socialLinks', 'company'])
                 ->firstOrFail();
+            return view('clients.show.show', compact('user'));
+    }
+    /**
+     * Supprime le compte entreprise et toutes ses données associées
+     *
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function destroy()
+    {
+        try {
+            DB::beginTransaction();
 
-            return view('clients.entreprises.show', compact('user'));
+            $user = auth()->user();
+            $company = $user->company;
+
+            // 1. Suppression des fichiers des employés
+            foreach ($company->employees as $employee) {
+                // Suppression des photos de profil des employés
+                if ($employee->photo_profile && Storage::disk('public')->exists($employee->photo_profile)) {
+                    Storage::disk('public')->delete($employee->photo_profile);
+                }
+
+                // Suppression des fichiers VCard des employés
+                if ($employee->vcard_file && Storage::exists($employee->vcard_file)) {
+                    Storage::delete($employee->vcard_file);
+                }
+            }
+
+            // 2. Suppression des fichiers de l'entreprise
+            // Photo de profil
+            if ($user->photo_profile && Storage::disk('public')->exists($user->photo_profile)) {
+                Storage::disk('public')->delete($user->photo_profile);
+            }
+
+            // VCard
+            if ($user->vcard_file && Storage::exists($user->vcard_file)) {
+                Storage::delete($user->vcard_file);
+            }
+
+            // Suppression des liens sociaux
+            SocialLink::where('user_id', $user->id)->delete();
+
+            // Suppression des vérifications d'email
+            EmailVerification::where('user_id', $user->id)->delete();
+
+            $user->delete();
+
+            DB::commit();
+
+            // Déconnexion de l'utilisateur
+            auth()->logout();
+
+            return redirect()->route('login')
+            ->with('success', 'Votre compte entreprise et toutes les données associées ont été supprimés avec succès.');
         } catch (\Exception $e) {
-            return redirect()->route('home')
-                ->with('error', 'Profil entreprise introuvable.');
+            DB::rollBack();
+            return back()
+                ->with('error', 'Une erreur est survenue lors de la suppression du compte : ' . $e->getMessage());
         }
     }
 }

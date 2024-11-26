@@ -16,7 +16,7 @@
     .social-icon {
         margin: 0 10px;
         font-size: 24px;
-        transition: all 0.3s ease;
+        transition: all 0.3s ease; 
     }
     .social-icon:hover { transform: scale(1.2); }
     .social-icon.linkedin { color: #0077b5; }
@@ -143,7 +143,7 @@
         </div>
     </div>
 
-    
+
 @endsection
 
 @section('scripts')
