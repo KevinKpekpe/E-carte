@@ -28,35 +28,12 @@
 
                         <ul class="social-list list-inline mt-3 mb-0">
                             @foreach(auth()->user()->socialLinks as $socialLink)
-                                @if($socialLink->platform === 'facebook')
                                     <li class="list-inline-item">
                                         <a href="{{ $socialLink->url }}" target="_blank"
                                             class="social-list-item border-purple text-purple">
-                                            <i class="mdi mdi-facebook"></i>
+                                            <i class="mdi mdi-{{ strtolower($socialLink->platform) }}"></i>
                                         </a>
                                     </li>
-                                @elseif($socialLink->platform === 'google')
-                                    <li class="list-inline-item">
-                                        <a href="{{ $socialLink->url }}" target="_blank"
-                                            class="social-list-item border-danger text-danger">
-                                            <i class="mdi mdi-google"></i>
-                                        </a>
-                                    </li>
-                                @elseif($socialLink->platform === 'twitter')
-                                    <li class="list-inline-item">
-                                        <a href="{{ $socialLink->url }}" target="_blank"
-                                            class="social-list-item border-info text-info">
-                                            <i class="mdi mdi-twitter"></i>
-                                        </a>
-                                    </li>
-                                @elseif($socialLink->platform === 'github')
-                                    <li class="list-inline-item">
-                                        <a href="{{ $socialLink->url }}" target="_blank"
-                                            class="social-list-item border-secondary text-secondary">
-                                            <i class="mdi mdi-github"></i>
-                                        </a>
-                                    </li>
-                                @endif
                             @endforeach
                         </ul>
                     </div>

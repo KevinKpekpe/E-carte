@@ -24,7 +24,11 @@ class VerifyController extends Controller
         }
 
         $user = $verification->user;
-        $user->update(['email_verified_at' => Carbon::now(),'']);
+        $user->update([
+            'email_verified_at' => Carbon::now(),
+            'is_active' => true,
+            'expiration_date' => now()
+        ]);
         $verification->delete();
 
         return redirect()->route('login')
@@ -41,19 +45,14 @@ class VerifyController extends Controller
         if ($user->email_verified_at) {
             return back()->with('info', 'Cet email est déjà vérifié.');
         }
-
-        // Supprimer l'ancien token s'il existe
         EmailVerification::where('user_id', $user->id)->delete();
 
-        // Créer un nouveau token
         $token = Str::random(64);
         EmailVerification::create([
             'user_id' => $user->id,
             'token' => $token,
             'expires_at' => Carbon::now()->addMinutes(10)
         ]);
-
-        // Renvoyer l'email
         Mail::to($user->email)->send(new MailEmailVerification($user, $token));
 
         return back()->with('success', 'Un nouveau lien de vérification a été envoyé à votre adresse email.');

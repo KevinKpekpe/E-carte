@@ -28,14 +28,14 @@
                             </p>
 
                             <ul class="social-list list-inline mt-3 mb-0">
-                                @foreach (auth()->user()->socialLinks as $socialLink)
+                            @foreach(auth()->user()->socialLinks as $socialLink)
                                     <li class="list-inline-item">
                                         <a href="{{ $socialLink->url }}" target="_blank"
                                             class="social-list-item border-purple text-purple">
-                                            <i class="mdi mdi-facebook"></i>
+                                            <i class="mdi mdi-{{ strtolower($socialLink->platform) }}"></i>
                                         </a>
                                     </li>
-                                @endforeach
+                            @endforeach
                             </ul>
                         </div>
                         <div class="clearfix"></div>
@@ -89,12 +89,6 @@
                                 @csrf
                                 @method('DELETE')
                                 <button type="submit" class="dropdown-item text-danger">Supprimer mon compte</button>
-                            </form>
-                            <form action="" method="POST">
-                                @csrf
-                                <button type="submit" class="dropdown-item">
-                                    {{ auth()->user()->is_active ? 'Désactiver' : 'Activer' }} mon compte
-                                </button>
                             </form>
                             <a href="{{route('classique.client.show',auth()->user()->slug)}}" class="dropdown-item">Voir mes infos</a>
                         </div>

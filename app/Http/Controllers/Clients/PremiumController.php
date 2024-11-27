@@ -188,7 +188,7 @@ class PremiumController extends Controller
                 ->where('user_type_id', UserType::where('name', 'premium')->first()->id)
                 ->with(['socialLinks'])
                 ->firstOrFail();
-            return view('clients.show', compact('user'));
+            return view('clients.show.show', compact('user'));
     }
     /**
      * Supprime le compte premium
