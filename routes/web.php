@@ -29,10 +29,10 @@ Route::prefix('classique')->name('classique.')->middleware(['auth', 'user.type:c
 Route::get('classique/profile/{slug}', [ClassiqueController::class, 'show'])->name('classique.client.show');
 Route::get('premium/profile/{slug}', [PremiumController::class, 'show'])->name('premium.client.show');
 Route::get('entreprise/profile/{slug}', [EntrepriseController::class,'show'])->name('entreprise.client.show');
+Route::get('service/profile/{slug}', [EmployeeController::class, 'show'])->name('employe.service.show');
 // Routes protégées pour les utilisateurs classiques
 Route::prefix('entreprise')->name('entreprise.')->middleware(['auth', 'user.type:entreprise', 'verified'])->group(function () {
     Route::view('/', 'clients.entreprise.index')->name('index');
-    Route::view('/change', 'clients.entreprise.change-password')->name('change');
     Route::view('/edit', 'clients.entreprise.edit')->name('edit');
     Route::put('/update', [EntrepriseController::class, 'update'])->name('update');
     Route::put('/update-password', [PasswordChangeController::class, 'updatePassword'])
@@ -45,14 +45,13 @@ Route::prefix('entreprise')->name('entreprise.')->middleware(['auth', 'user.type
 Route::middleware(['auth', 'user.type:premium', 'verified'])->group(function () {
     Route::view('/premium', 'clients.premium.index')->name('premium.index');
     Route::view('/premium/edit', 'clients.premium.edit')->name('premium.edit');
-    Route::view('/premium/change', 'clients.premium.change-password')->name('premium.change');
     Route::put('/premium/update',[PremiumController::class,'update'])->name('premium.update');
     Route::put('/premium/update-password', [PasswordChangeController::class, 'updatePassword'])
     ->name('premium.update-password');
     Route::delete('/delete', [PremiumController::class, 'destroy'])->name('premium.destroy');
 });
 
-// Routes protégées pour créer les Utilisateurs
+// Routes pour créer les Utilisateurs
 Route::middleware('guest')->group(function () {
     Route::get('/register/classique', [ClassiqueController::class, 'create']);
     Route::post('/register/classique', [ClassiqueController::class, 'register'])->name('register.classique');
@@ -101,6 +100,10 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'user.type:superadmi
     Route::get('/profil',[ProfilController::class,'index'])->name('profil');
     Route::get('/profil/edit', [ProfilController::class,'edit'])->name('profil.edit');
     Route::put('/profil/update', [ProfilController::class,'update'])->name('profil.update');
+    Route::put('/update-password', [PasswordChangeController::class, 'updatePassword'])
+    ->name('update-password');
+    Route::delete('/delete', [ProfilController::class, 'destroy'])
+    ->name('destroy');
 });
 Route::get('/users/activate/{token}', [UserController::class, 'activateAccount'])->name('users.activate');
 

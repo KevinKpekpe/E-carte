@@ -40,7 +40,7 @@
                         </div>
 
                         <div class="mb-3 text-center d-grid">
-                            <button class="btn btn-primary" type="submit">Envoyer le lien</button>
+                            <button class="btn btn-warning" type="submit">Envoyer le lien</button>
                         </div>
                     </form>
                 </div>

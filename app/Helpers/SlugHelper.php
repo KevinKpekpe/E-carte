@@ -7,7 +7,7 @@ use App\Models\User;
 
 class SlugHelper
 {
-    public static function generateUniqueSlug($clientName, $id, $maxAttempts = 10)
+    public static function generateUniqueSlug($id, $maxAttempts = 10)
     {
         $attempts = 0;
 
@@ -16,17 +16,12 @@ class SlugHelper
                 throw new \Exception("Impossible de générer un slug unique après {$maxAttempts} tentatives.");
             }
 
-            // Nettoyer le nom du client
-            $cleanName = Str::slug($clientName, '-', 'fr');
+            // Générer une chaîne aléatoire de 12 caractères
+            $uniqueString = Str::random(12);
 
-            // Générer une chaîne aléatoire unique
-            $uniqueString = Str::random(6);
-
-            // Créer le slug en combinant le nom, l'ID et la chaîne unique
+            // Créer le slug en combinant l'ID et la chaîne aléatoire
             $slug = strtolower(
-                $cleanName . '-' .
-                    $id . '-' .
-                    $uniqueString
+                $id . '-' . $uniqueString
             );
 
             // Vérifier si le slug existe déjà
@@ -41,7 +36,7 @@ class SlugHelper
     /**
      * Génère un slug court pour les URLs
      */
-    public static function generateShortSlug($id, $maxAttempts = 10)
+    public static function generateShortSlug($maxAttempts = 10)
     {
         $attempts = 0;
 
@@ -50,8 +45,8 @@ class SlugHelper
                 throw new \Exception("Impossible de générer un slug court unique après {$maxAttempts} tentatives.");
             }
 
-            // Générer une chaîne aléatoire de 8 caractères
-            $uniqueString = Str::random(8);
+            // Générer une chaîne aléatoire de 10 caractères
+            $uniqueString = Str::random(10);
 
             // Créer le slug court
             $slug = strtolower($uniqueString);
@@ -70,7 +65,7 @@ class SlugHelper
      */
     public static function isValidSlug($slug)
     {
-        // Vérifier si le slug correspond au format attendu
+        // Vérifier si le slug correspond au format attendu (caractères alphanumériques et tirets)
         return preg_match('/^[a-z0-9\-]+$/', $slug);
     }
 

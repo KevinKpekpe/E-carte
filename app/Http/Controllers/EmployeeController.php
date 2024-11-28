@@ -107,7 +107,7 @@ class EmployeeController extends Controller
                 'photo_profile' => $photoPath,
                 'is_active' => true,
                 'expiration_date' => now()->addYear(),
-                'slug' => SlugHelper::generateUniqueSlug($request->nom . ' ' . $request->prenom, $nextId)
+                'slug' => SlugHelper::generateUniqueSlug($nextId),
             ]);
 
             // Génération du fichier VCard
@@ -168,6 +168,26 @@ class EmployeeController extends Controller
             return redirect()->back()
                 ->with('error', 'Une erreur est survenue lors de la mise à jour : ' . $e->getMessage())
                 ->withInput();
+        }
+    }
+
+    /**
+     * Affiche le profil d'un utilisateur
+     *
+     * @param string $slug
+     * @return \Illuminate\View\View|\Illuminate\Http\RedirectResponse
+     */
+    public function show($slug)
+    {
+        try {
+            // Recherche de l'utilisateur par son slug
+            $user = Employee::where('slug', $slug)
+                ->firstOrFail();
+
+            return view('clients.entreprise.employee.show', compact('user'));
+        } catch (\Exception $e) {
+            return redirect()->route('classique.index')
+            ->with('error', 'Profil introuvable.');
         }
     }
 

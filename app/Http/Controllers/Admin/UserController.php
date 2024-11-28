@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Helpers\SlugHelper;
 use App\Http\Controllers\Controller;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -155,7 +156,7 @@ class UserController extends Controller
 
         try {
             DB::beginTransaction();
-
+            $nextId = DB::table('users')->max('id') + 1;
             // Traitement de la photo
             $photoPath = null;
             if ($request->hasFile('photo')) {
@@ -174,6 +175,7 @@ class UserController extends Controller
                 'user_type_id' => $request->user_type_id,
                 'is_active' => true,
                 'expiration_date' => now(),
+                'slug' => SlugHelper::generateUniqueSlug($nextId),
             ]);
 
             // Création de l'entreprise si nécessaire

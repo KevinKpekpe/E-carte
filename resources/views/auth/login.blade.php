@@ -64,7 +64,7 @@
                             </div>
 
                             <div class="mb-3 d-grid text-center">
-                                <button class="btn btn-primary" type="submit">Connexion</button>
+                                <button class="btn btn-warning" type="submit">Connexion</button>
                             </div>
                         </form>
                     </div>

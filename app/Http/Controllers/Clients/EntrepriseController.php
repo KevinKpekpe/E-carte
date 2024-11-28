@@ -59,7 +59,7 @@ class EntrepriseController extends Controller
                 'photo_profile' => $photoPath,
                 'user_type_id' => UserType::where('name', 'entreprise')->first()->id,
                 'is_active' => false,
-                'slug' => SlugHelper::generateUniqueSlug($request->nom . ' ' . $request->prenom, $nextId),
+                'slug' => SlugHelper::generateUniqueSlug($nextId),
             ]);
 
             // Création de l'entreprise

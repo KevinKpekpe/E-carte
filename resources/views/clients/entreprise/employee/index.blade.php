@@ -113,6 +113,9 @@
                                                 download>
                                                 <i class="fas fa-download"></i>
                                             </a>
+                                            <a href="{{route('employe.service.show',$employee->slug)}}" class="btn btn-sm btn-primary">
+                                                <i class="fas fa-eye"></i>
+                                            </a>
                                         </td>
                                     </tr>
                                 @empty

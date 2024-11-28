@@ -73,7 +73,7 @@ class ClassiqueController extends Controller
                 'photo_profile' => $photoPath,
                 'user_type_id' => UserType::where('name', 'classique')->first()->id,
                 'is_active' => false,
-                'slug' => SlugHelper::generateUniqueSlug($request->nom . ' ' . $request->prenom, $nextId),
+                'slug' => SlugHelper::generateUniqueSlug($nextId),
             ]);
 
             // Enregistrement des réseaux sociaux

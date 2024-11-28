@@ -21,7 +21,6 @@
         <div class="navbar-custom">
             <div class="container-fluid ps-0">
                 <ul class="list-unstyled topnav-menu float-end mb-0">
-
                     <li class="d-none d-lg-block">
                         <form class="app-search">
                             <div class="app-search-box">
@@ -34,7 +33,6 @@
                             </div>
                         </form>
                     </li>
-
                     <li class="notification-list d-none d-lg-block">
                         <a href="javascript:void(0);" class="nav-link waves-effect waves-light" id="light-dark-mode"
                             type="button">
